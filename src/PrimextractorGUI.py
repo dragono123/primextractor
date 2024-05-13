@@ -348,7 +348,7 @@ class PrimextractorGUI():
 
         result_frame = ttk.Frame(menu_frame)
         result_frame.grid(column=0, row=3, columnspan=3)
-        DynamicLabelWidget(self, "extraction_results", result_frame, "test").\
+        DynamicLabelWidget(self, "extraction_results", result_frame, "Extracted text").\
             set_grid(column=0, row=0)
 
         color_frame = ttk.Frame(menu_frame)
