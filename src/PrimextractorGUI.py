@@ -141,9 +141,12 @@ class CanvasWidget(Widget):
 
 class ComboBoxWidget(Widget):
     def __init__(self, primextractor, valuename, frame,
-                 combo_choices):
+                 combo_choices, isInteger=False):
         self.valuename = valuename
-        self.associatedValue = tk.StringVar()
+        if isInteger:
+            self.associatedValue = tk.IntVar()
+        else:
+            self.associatedValue = tk.StringVar()
 
         self.widgetname = valuename
         self.tkWidget = ttk.Combobox(frame, textvariable=self.associatedValue)
@@ -412,7 +415,8 @@ class PrimextractorGUI():
         ttk.Label(setting_frame, text='Text cleaner Inverted Mod Setting:').\
             grid(column=0, row=5)
         ComboBoxWidget(self, "cleaner_inverted_mod",
-                       setting_frame, (0, 1, 2)).\
+                       setting_frame, (0, 1, 2),
+                       isInteger=True).\
             set_grid(column=1, row=5)
 
         ttk.Label(setting_frame, text='PSM:').grid(column=0, row=6)
@@ -512,7 +516,7 @@ class PrimextractorGUI():
         image = set_treshold(image, self.get_value("treshold_factor"))
 
         image = first_filter(image, self.get_value("isonoise"))
-        image = clear_image(image, self.get_value("invert_image"),
+        image = clear_image(image, self.get_value("invert_colors"),
                             self.get_value("clear_borders"),
                             self.get_value("cleaner_inverted_mod"))
         image = second_filter(image, self.get_value("isonoise"),
