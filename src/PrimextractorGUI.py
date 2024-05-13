@@ -277,6 +277,7 @@ class PrimextractorGUI():
             self.update_key(config, "filter_size", "clean_filter_factor")
             self.update_key(config, "cleaner_inverted_mod",
                             "cleaner_inverted_mod")
+            self.update_bool_key(config, "invert_colors", "invert_colors")
             self.update_bool_key(config, "clear_borders", "clear_borders")
             self.update_key(config, "erosion_factor", "erosion_factor")
             self.update_key(config, "dilation_factor", "dilation_factor")
@@ -400,7 +401,7 @@ class PrimextractorGUI():
                     resolution=0.1).\
             set_grid(column=1, row=3, columnspan=2)
 
-        CheckButtonWidget(self, "invert_image", setting_frame,
+        CheckButtonWidget(self, "invert_colors", setting_frame,
                           "Invert Image").set_grid(column=0, row=4)
         CheckButtonWidget(self, "clear_borders", setting_frame,
                           "Clear Borders").set_grid(column=1, row=4)
@@ -505,7 +506,7 @@ class PrimextractorGUI():
 
         image = convert_to_gray(image, self.get_value("color_diff_enabled"),
                                 self.get_value("color_selection"))
-        image = set_inverted(image, self.get_value("invert_image"))
+        image = set_inverted(image, self.get_value("invert_colors"))
         image = clean_text(image, self.get_value("cleaner_inverted_mod"),
                            self.get_value("clean_filter_factor"))
         image = set_treshold(image, self.get_value("treshold_factor"))
