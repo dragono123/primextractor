@@ -580,7 +580,7 @@ class PrimextractorGUI():
         if self.get_canvas().is_viewing_original():
             image = Image.open("processed/original_image.png")
         else:
-            image = Image.open("processed/current_imager.png")
+            image = Image.open("processed/current_image.png")
 
         canvas = self.get_canvas()
         canvas_w, canvas_h = canvas.get_dims()
