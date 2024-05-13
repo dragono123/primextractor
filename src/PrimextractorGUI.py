@@ -90,8 +90,8 @@ class ScaleWidget(Widget):
 class CanvasWidget(Widget):
     def __init__(self, primextractor, widgetname, frame, width, height):
         self.widgetname = widgetname
-        self.width = width
-        self.height = height
+        # self.width = width
+        # self.height = height
         self.image = None
         self.original = False
         self.tkWidget = tk.Canvas(frame, width=width, height=height)
@@ -111,7 +111,7 @@ class CanvasWidget(Widget):
         return not self.original
 
     def get_dims(self):
-        return (self.width, self.height)
+        return (self.tkWidget.winfo_width(), self.tkWidget.winfo_height())
 
     def update_image(self, clipboard=False):
         if clipboard:
@@ -120,8 +120,9 @@ class CanvasWidget(Widget):
         else:
             image = Image.open("processed/current_image.png")
             self.original = False
-        image.thumbnail((self.width, self.height))
-        background = Image.new('RGBA', (self.width, self.height),
+        width, height = self.get_dims()
+        image.thumbnail((width, height))
+        background = Image.new('RGBA', (width, height),
                                (255, 255, 255, 255))
         bg_w, bg_h = background.size
         img_w, img_h = image.size
@@ -243,13 +244,21 @@ class PrimextractorGUI():
         self.root.mainloop()
 
     def generate_main_frame(self, root):
-        image_frame = ttk.Label(root)
+        root.grid_columnconfigure(0, weight=1)
+        main_frame = ttk.Label(root)
+        main_frame.grid(column=0, row=0)
+        # self.grid_columnconfigure(1, weight=1)
+        # self.grid_columnconfigure(2, weight=1)
+        # self.grid_rowconfigure(0, weight=1)
+        # self.grid_rowconfigure(1, weight=1)
+
+        image_frame = ttk.Label(main_frame)
         image_frame.grid(column=0, row=0)
 
-        setting_frame = ttk.Frame(root)
+        setting_frame = ttk.Frame(main_frame)
         setting_frame.grid(column=0, row=1)
 
-        menu_frame = ttk.Frame(root)
+        menu_frame = ttk.Frame(main_frame)
         menu_frame.grid(column=0, row=2)
 
         self.generate_setting_frame(setting_frame)
