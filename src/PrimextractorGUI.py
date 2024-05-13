@@ -101,7 +101,7 @@ class CanvasWidget(Widget):
     def is_image_loaded(self):
         return (self.is_viewing_original() and
                 os.path.exists("processed/original_image.png")) or \
-            (not self.is_viewing_original and
+            (not self.is_viewing_original() and
              os.path.exists("processed/current_image.png"))
 
     def is_viewing_original(self):
