@@ -365,6 +365,8 @@ class PrimextractorGUI():
     def update_key(self, config, key, win_key):
         if "settings" in config and key in config["settings"]:
             self.set_value(win_key, config["settings"][key])
+            return True
+        return False
 
     def update_bool_key(self, config, key, win_key):
         if "settings" in config:
@@ -391,6 +393,10 @@ class PrimextractorGUI():
             self.update_key(config, "rotation_factor", "rotation_factor")
             self.update_key(config, "feathering_factor", "feathering_factor")
             self.update_key(config, "oem", "oem")
+
+            if (self.update_key(config, "color_selection",
+                                "color_selection")):
+                self.update_displayed_color(self.get_value("color_selection"))
 
     def update_from_selected_model(self, event):
         self.update_interface_with_model(self.get_value("model_selection"))
