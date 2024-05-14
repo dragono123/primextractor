@@ -86,6 +86,11 @@ class ScaleWidget(Widget):
         self.add_widget_to_primextractor(primextractor)
         self.add_value_to_primextractor(primextractor)
 
+    def set_grid(self, column, row, columnspan=1, rowspan=1):
+        self.tkWidget.grid(column=column, row=row,
+                           columnspan=columnspan, rowspan=rowspan,
+                           sticky="ew")
+
 
 class CanvasWidget(Widget):
     def __init__(self, primextractor, widgetname, frame, width, height):
@@ -330,8 +335,7 @@ class PrimextractorGUI():
                                                           vertical=False)
         main_scrollable_container.set_pack(fill=tk.BOTH, expand=True)
 
-        main_frame = ttk.Label(main_scrollable_container.get_frame())
-        main_frame.pack()
+        main_frame = main_scrollable_container.get_frame()
 
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(1, weight=1)
