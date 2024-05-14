@@ -164,6 +164,23 @@ class ComboBoxWidget(Widget):
         self.tkWidget.bind('<<ComboboxSelected>>', function)
 
 
+class DynamicTextWidget(Widget):
+    def __init__(self, primextractor, widgetname, frame, text):
+        self.widgetname = widgetname
+        # self.associatedValue = tk.StringVar()
+        self.tkWidget = tk.Text(frame, width=42, height=5)
+        self.set_text(text)
+
+        self.add_widget_to_primextractor(primextractor)
+        self.add_value_to_primextractor(primextractor)
+
+    def set_text(self, new_text):
+        self.tkWidget.set(new_text)
+
+    def set_bg_color(self, color):
+        self.tkWidget.config(bg=color)
+
+
 class DynamicLabelWidget(Widget):
     def __init__(self, primextractor, valuename, frame, text):
         self.widgetname = valuename
@@ -184,20 +201,29 @@ class DynamicLabelWidget(Widget):
 
 
 class ScrollableFrameWidget(Widget):
-    def __init__(self, widgetname, parentframe):
+    def __init__(self, widgetname, parentframe, vertical=True):
         self.container = tk.Frame(parentframe)
         self.canvas = tk.Canvas(self.container)
-        self.scrollbar = ttk.Scrollbar(self.container, orient='vertical',
-                                       command=self.canvas.yview)
+        self.vertical = vertical
+        if vertical:
+            self.scrollbar = ttk.Scrollbar(self.container, orient='vertical',
+                                           command=self.canvas.yview)
+        else:
+            self.scrollbar = ttk.Scrollbar(self.container, orient='horizontal',
+                                           command=self.canvas.xview)
         self.interior = tk.Frame(self.canvas)
 
         self.interior_id = self.canvas.\
             create_window((0, 0), window=self.interior, anchor="nw")
 
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
-
-        self.canvas.pack(side="left", fill="both", expand=True)
-        self.scrollbar.pack(side="right", fill="y")
+        if vertical:
+            self.canvas.configure(yscrollcommand=self.scrollbar.set)
+            self.canvas.pack(side="left", fill="both", expand=True)
+            self.scrollbar.pack(side="right", fill="y")
+        else:
+            self.canvas.configure(xscrollcommand=self.scrollbar.set)
+            self.canvas.pack(side="top", fill="both", expand=True)
+            self.scrollbar.pack(side="bottom", fill="x")
 
         self.interior.bind('<Configure>', self._configure_interior)
         self.canvas.bind('<Configure>', self._configure_canvas)
@@ -205,22 +231,33 @@ class ScrollableFrameWidget(Widget):
     def set_grid(self, column, row, sticky):
         self.container.grid(column=0, row=1, sticky=sticky)
 
+    def set_pack(self, fill, expand):
+        self.container.pack(fill=fill, expand=expand)
+
     # Track changes to the canvas and frame width and sync them,
     # also updating the scrollbar.
     def _configure_interior(self, event):
         # Update the scrollbars to match the size of the inner frame.
-        size = (self.interior.winfo_reqwidth(),
-                self.interior.winfo_reqheight())
-        self.canvas.config(scrollregion="0 0 %s %s" % size)
-        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        if self.vertical and\
+                self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             # Update the canvas's width to fit the inner frame.
             self.canvas.config(width=self.interior.winfo_reqwidth())
+        elif not self.vertical and\
+                self.interior.winfo_reqheight() != self.canvas.winfo_height():
+            # Update the canvas's height to fit the inner frame.
+            self.canvas.config(height=self.interior.winfo_reqheight())
 
     def _configure_canvas(self, event):
-        if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
+        if self.vertical and\
+                self.interior.winfo_reqwidth() != self.canvas.winfo_width():
             # Update the inner frame's width to fill the canvas.
             self.canvas.itemconfigure(self.interior_id,
                                       width=self.canvas.winfo_width())
+        elif not self.vertical and\
+                self.interior.winfo_reqheight() != self.canvas.winfo_height():
+            self.canvas.itemconfigure(self.interior_id,
+                                      height=self.canvas.winfo_height())
 
     def get_frame(self):
         return self.interior
@@ -287,8 +324,14 @@ class PrimextractorGUI():
         self.root.mainloop()
 
     def generate_main_frame(self, root):
-        main_frame = ttk.Label(root)
-        main_frame.pack(fill=tk.BOTH, expand=1)
+
+        main_scrollable_container = ScrollableFrameWidget("main_frame",
+                                                          root,
+                                                          vertical=False)
+        main_scrollable_container.set_pack(fill=tk.BOTH, expand=True)
+
+        main_frame = ttk.Label(main_scrollable_container.get_frame())
+        main_frame.pack()
 
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(1, weight=1)
