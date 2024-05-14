@@ -63,45 +63,44 @@ def set_inverted(img, inverted):
 
 
 def clean_text(img, invert_cleaner, filter_size):
-    if int(filter_size) > 0:
-        cv2.imwrite("processed/text_to_clean.png", img)
-        if int(invert_cleaner) > 0:
-            subprocess.run(["scripts/textcleaner", "-i", str(invert_cleaner), "-f", str(filter_size), "processed/text_to_clean.png", "processed/text_cleaned.png"])
-        else:
-            subprocess.run(["scripts/textcleaner", "-f", str(filter_size), "processed/text_to_clean.png", "processed/text_cleaned.png"])
-        img = cv2.imread("processed/text_cleaned.png")
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # if int(filter_size) > 0:
+    #     cv2.imwrite("processed/text_to_clean.png", img)
+    #     if int(invert_cleaner) > 0:
+    #         subprocess.run(["scripts/textcleaner", "-i", str(invert_cleaner), "-f", str(filter_size), "processed/text_to_clean.png", "processed/text_cleaned.png"])
+    #     else:
+    #         subprocess.run(["scripts/textcleaner", "-f", str(filter_size), "processed/text_to_clean.png", "processed/text_cleaned.png"])
+    #     img = cv2.imread("processed/text_cleaned.png")
+    #     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return img
 
 
 def first_filter(img, isonoise):
-    if int(isonoise) > 0:
-        cv2.imwrite("processed/text_to_clean2.png", img)
-        subprocess.run(["scripts/noisecleaner", "processed/text_to_clean2.png", "processed/text_to_clean3.png"])
-        subprocess.run(["scripts/isonoise", "processed/text_to_clean3.png", "processed/text_cleaned2.png"])
-        img = cv2.imread("processed/text_cleaned2.png")
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # if int(isonoise) > 0:
+    #     cv2.imwrite("processed/text_to_clean2.png", img)
+    #     subprocess.run(["scripts/noisecleaner", "processed/text_to_clean2.png", "processed/text_to_clean3.png"])
+    #     subprocess.run(["scripts/isonoise", "processed/text_to_clean3.png", "processed/text_cleaned2.png"])
+    #     img = cv2.imread("processed/text_cleaned2.png")
+    #     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return img
 
 
 def second_filter(img, isonoise, feathering, erosion, dilation):
-    if int(isonoise) > 0:
-        cv2.imwrite("processed/text_to_clean2.png", img)
-        subprocess.run(["scripts/isonoise", "-r", str(isonoise), "processed/text_to_clean2.png", "processed/text_cleaned2.png"])
-        img = cv2.imread("processed/text_cleaned2.png")
-    
-        cv2.imwrite("processed/text_to_clean2.png", img)
-        subprocess.run(["scripts/noisecleaner", "processed/text_to_clean2.png", "processed/text_cleaned2t.png"])
-        img = cv2.imread("processed/text_cleaned2.png")
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # if int(isonoise) > 0:
+    #     cv2.imwrite("processed/text_to_clean2.png", img)
+    #     subprocess.run(["scripts/isonoise", "-r", str(isonoise), "processed/text_to_clean2.png", "processed/text_cleaned2.png"])
+    #     img = cv2.imread("processed/text_cleaned2.png")
+    #
+    #     cv2.imwrite("processed/text_to_clean2.png", img)
+    #     subprocess.run(["scripts/noisecleaner", "processed/text_to_clean2.png", "processed/text_cleaned2t.png"])
+    #     img = cv2.imread("processed/text_cleaned2.png")
+    #     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
     if int(feathering) > 0:
-        # img = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_AREA)
-        cv2.imwrite("processed/text_to_clean2.png", img)
-        subprocess.run(["scripts/feather", "-d", str(feathering), "processed/text_to_clean2.png", "processed/text_cleaned2.png"])
-        img = cv2.imread("processed/text_cleaned2.png")
-        # img = cv2.resize(img, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # cv2.imwrite("processed/text_to_clean2.png", img)
+        # subprocess.run(["scripts/feather", "-d", str(feathering), "processed/text_to_clean2.png", "processed/text_cleaned2.png"])
+        # img = cv2.imread("processed/text_cleaned2.png")
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
         
     erosion = int(erosion)
     dilation = int(dilation)
