@@ -177,15 +177,14 @@ class ComboBoxWidget(Widget):
 class DynamicTextWidget(Widget):
     def __init__(self, primextractor, widgetname, frame, text):
         self.widgetname = widgetname
-        # self.associatedValue = tk.StringVar()
         self.tkWidget = tk.Text(frame, width=42, height=5)
         self.set_text(text)
 
         self.add_widget_to_primextractor(primextractor)
-        self.add_value_to_primextractor(primextractor)
 
     def set_text(self, new_text):
-        self.tkWidget.set(new_text)
+        self.tkWidget.delete('1.0', tk.END)
+        self.tkWidget.insert('1.0', new_text)
 
     def set_bg_color(self, color):
         self.tkWidget.config(bg=color)
@@ -459,8 +458,8 @@ class PrimextractorGUI():
 
         result_frame = ttk.Frame(menu_frame)
         result_frame.grid(column=0, row=3, columnspan=3)
-        DynamicLabelWidget(self, "extraction_results",
-                           result_frame, "Extracted text").\
+        DynamicTextWidget(self, "extraction_results",
+                          result_frame, "Extracted text").\
             set_grid(column=0, row=0)
 
         color_frame = ttk.Frame(menu_frame)
