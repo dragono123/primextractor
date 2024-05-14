@@ -384,14 +384,11 @@ class PrimextractorGUI():
             self.update_key(config, "psm", "psm")
             self.update_key(config, "resizing_factor", "resizing_factor")
             self.update_key(config, "filter_size", "clean_filter_factor")
-            self.update_key(config, "cleaner_inverted_mod",
-                            "cleaner_inverted_mod")
             self.update_bool_key(config, "invert_colors", "invert_colors")
             self.update_bool_key(config, "clear_borders", "clear_borders")
             self.update_key(config, "erosion_factor", "erosion_factor")
             self.update_key(config, "dilation_factor", "dilation_factor")
             self.update_key(config, "rotation_factor", "rotation_factor")
-            self.update_key(config, "isonoise", "isonoise")
             self.update_key(config, "feathering_factor", "feathering_factor")
             self.update_key(config, "oem", "oem")
 
@@ -508,7 +505,7 @@ class PrimextractorGUI():
         ttk.Label(setting_frame, text='Image Cleaner Filter::').\
             grid(column=0, row=3)
         ScaleWidget(self, "clean_filter_factor", setting_frame, (0, 50),
-                    resolution=0.1).\
+                    resolution=1).\
             set_grid(column=1, row=3, columnspan=2)
 
         CheckButtonWidget(self, "invert_colors", setting_frame,
@@ -518,49 +515,35 @@ class PrimextractorGUI():
         CheckButtonWidget(self, "color_diff_enabled", setting_frame,
                           "Enable Color Difference").set_grid(column=2, row=4)
 
-        # Not sure if it is worth keeping
-        ttk.Label(setting_frame, text='Text cleaner Inverted Mod Setting:').\
-            grid(column=0, row=5)
-        ComboBoxWidget(self, "cleaner_inverted_mod",
-                       setting_frame, (0, 1, 2),
-                       isInteger=True).\
-            set_grid(column=1, row=5)
-
-        ttk.Label(setting_frame, text='PSM:').grid(column=0, row=6)
+        ttk.Label(setting_frame, text='PSM:').grid(column=0, row=5)
         ComboBoxWidget(self, "psm",
                        setting_frame, tuple(range(14))).\
-            set_grid(column=1, row=6)
+            set_grid(column=1, row=5)
 
-        ttk.Label(setting_frame, text='OEM:').grid(column=2, row=6)
+        ttk.Label(setting_frame, text='OEM:').grid(column=2, row=5)
         ComboBoxWidget(self, "oem",
                        setting_frame, tuple(range(4))).\
-            set_grid(column=3, row=6)
+            set_grid(column=3, row=5)
 
-        ttk.Label(setting_frame, text='Lang:').grid(column=4, row=6)
+        ttk.Label(setting_frame, text='Lang:').grid(column=4, row=5)
         ComboBoxWidget(self, "lang",
                        setting_frame, pytesseract.get_languages(config='')).\
-            set_grid(column=5, row=6)
+            set_grid(column=5, row=5)
 
-        ttk.Label(setting_frame, text='Feathering:').grid(column=0, row=7)
+        ttk.Label(setting_frame, text='Feathering:').grid(column=0, row=6)
         ScaleWidget(self, "feathering_factor", setting_frame, (0, 10),
+                    resolution=0.1).\
+            set_grid(column=1, row=6, columnspan=2)
+
+        ttk.Label(setting_frame, text='Erosion:').grid(column=0, row=7)
+        ScaleWidget(self, "erosion_factor", setting_frame, (0, 10),
                     resolution=0.1).\
             set_grid(column=1, row=7, columnspan=2)
 
-        ttk.Label(setting_frame, text='Erosion:').grid(column=0, row=8)
-        ScaleWidget(self, "erosion_factor", setting_frame, (0, 10),
-                    resolution=0.1).\
-            set_grid(column=1, row=8, columnspan=2)
-
-        ttk.Label(setting_frame, text='Dilation:').grid(column=0, row=9)
+        ttk.Label(setting_frame, text='Dilation:').grid(column=0, row=8)
         ScaleWidget(self, "dilation_factor", setting_frame, (0, 10),
                     resolution=0.1).\
-            set_grid(column=1, row=9, columnspan=2)
-
-        ttk.Label(setting_frame, text='Isonoise Filtering:').\
-            grid(column=0, row=10)
-        ScaleWidget(self, "isonoise", setting_frame, (0, 10),
-                    resolution=0.1).\
-            set_grid(column=1, row=10, columnspan=2)
+            set_grid(column=1, row=8, columnspan=2)
 
     def export_current_settings_as_model(self):
         file = fd.asksaveasfile(mode='w', defaultextension=".ini")
@@ -618,18 +601,15 @@ class PrimextractorGUI():
         image = convert_to_gray(image, self.get_value("color_diff_enabled"),
                                 self.get_value("color_selection"))
         image = set_inverted(image, self.get_value("invert_colors"))
-        image = clean_text(image, self.get_value("cleaner_inverted_mod"),
-                           self.get_value("clean_filter_factor"))
-        image = set_treshold(image, self.get_value("treshold_factor"))
+        image = set_treshold(image, self.get_value("treshold_factor"),
+                             self.get_value("clean_filter_factor"))
 
-        image = first_filter(image, self.get_value("isonoise"))
+        # image = first_filter(image, self.get_value("isonoise"))
         image = clear_image(image, self.get_value("invert_colors"),
-                            self.get_value("clear_borders"),
-                            self.get_value("cleaner_inverted_mod"))
-        image = second_filter(image, self.get_value("isonoise"),
-                              self.get_value("feathering_factor"),
-                              self.get_value("erosion_factor"),
-                              self.get_value("dilation_factor"))
+                            self.get_value("clear_borders"))
+        image = apply_filter(image, self.get_value("feathering_factor"),
+                             self.get_value("erosion_factor"),
+                             self.get_value("dilation_factor"))
         cv2.imwrite("processed/current_image.png", image)
 
         self.get_canvas().update_image()
