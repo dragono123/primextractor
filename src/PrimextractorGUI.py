@@ -48,6 +48,11 @@ class ButtonWidget(Widget):
 
         self.add_widget_to_primextractor(primextractor)
 
+    def set_grid(self, column, row, columnspan=1, rowspan=1):
+        self.tkWidget.grid(column=column, row=row,
+                           columnspan=columnspan, rowspan=rowspan,
+                           sticky="ew")
+
 
 class CheckButtonWidget(Widget):
     def __init__(self, primextractor, valuename, frame, text):
@@ -207,7 +212,7 @@ class DynamicLabelWidget(Widget):
 
 class ScrollableFrameWidget(Widget):
     def __init__(self, widgetname, parentframe, vertical=True):
-        self.container = tk.Frame(parentframe)
+        self.container = ttk.Frame(parentframe)
         self.canvas = tk.Canvas(self.container)
         self.vertical = vertical
         if vertical:
@@ -216,7 +221,7 @@ class ScrollableFrameWidget(Widget):
         else:
             self.scrollbar = ttk.Scrollbar(self.container, orient='horizontal',
                                            command=self.canvas.xview)
-        self.interior = tk.Frame(self.canvas)
+        self.interior = ttk.Frame(self.canvas)
 
         self.interior_id = self.canvas.\
             create_window((0, 0), window=self.interior, anchor="nw")
@@ -348,10 +353,10 @@ class PrimextractorGUI():
         setting_scrollable_container.set_grid(column=0, row=1,
                                               sticky=tk.E+tk.W+tk.N+tk.S)
 
-        setting_frame = tk.Frame(setting_scrollable_container.get_frame())
+        setting_frame = ttk.Frame(setting_scrollable_container.get_frame())
         setting_frame.pack()
 
-        menu_frame = tk.Frame(main_frame)
+        menu_frame = ttk.Frame(main_frame)
         menu_frame.grid(column=0, row=2)
 
         self.generate_setting_frame(setting_frame)
@@ -424,7 +429,7 @@ class PrimextractorGUI():
                      command=self.export_current_settings_as_model).\
             set_grid(column=2, row=0)
 
-        option_frame = tk.Frame(menu_frame)
+        option_frame = ttk.Frame(menu_frame)
         option_frame.grid(column=0, row=1, columnspan=3, rowspan=2)
 
         ButtonWidget(self, "image_clipboard",
@@ -452,13 +457,13 @@ class PrimextractorGUI():
                      command=self.copy_processed_image).\
             set_grid(column=2, row=1)
 
-        result_frame = tk.Frame(menu_frame)
+        result_frame = ttk.Frame(menu_frame)
         result_frame.grid(column=0, row=3, columnspan=3)
         DynamicLabelWidget(self, "extraction_results",
                            result_frame, "Extracted text").\
             set_grid(column=0, row=0)
 
-        color_frame = tk.Frame(menu_frame)
+        color_frame = ttk.Frame(menu_frame)
         color_frame.grid(column=0, row=4, columnspan=3)
         DynamicLabelWidget(self, "displayed_color", color_frame, "#FFFFFF").\
             set_grid(column=0, row=0)
@@ -472,7 +477,7 @@ class PrimextractorGUI():
                     tickinterval=45, resolution=1).\
             set_grid(column=1, row=0, columnspan=2)
 
-        rotation_set_frame = tk.Frame(setting_frame)
+        rotation_set_frame = ttk.Frame(setting_frame)
         rotation_set_frame.grid(column=3, row=0, columnspan=3)
 
         ButtonWidget(self, "sub_five", rotation_set_frame, "-5",
