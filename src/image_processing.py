@@ -85,29 +85,26 @@ def first_filter(img, isonoise):
 
 
 def second_filter(img, isonoise, feathering, erosion, dilation):
-    # if int(isonoise) > 0:
-    #     cv2.imwrite("processed/text_to_clean2.png", img)
-    #     subprocess.run(["scripts/isonoise", "-r", str(isonoise), "processed/text_to_clean2.png", "processed/text_cleaned2.png"])
-    #     img = cv2.imread("processed/text_cleaned2.png")
-    #
-    #     cv2.imwrite("processed/text_to_clean2.png", img)
-    #     subprocess.run(["scripts/noisecleaner", "processed/text_to_clean2.png", "processed/text_cleaned2t.png"])
-    #     img = cv2.imread("processed/text_cleaned2.png")
-    #     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
-    if int(feathering) > 0:
-        # cv2.imwrite("processed/text_to_clean2.png", img)
-        # subprocess.run(["scripts/feather", "-d", str(feathering), "processed/text_to_clean2.png", "processed/text_cleaned2.png"])
-        # img = cv2.imread("processed/text_cleaned2.png")
-        # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        
+    if int(feathering) > 0:
+        cv2.imwrite("processed/text_to_clean2.png", img)
+        qrange = subprocess.check_output(
+                "convert xc: -format \"%[fx:quantumrange]\" info:".split())
+        qrange = qrange.decode("utf-8")[1:-1]
+
+        subprocess.run(["convert", "processed/text_to_clean2.png", "-blur",
+                        f"{feathering}x{qrange}", "-level", "50%,100%",
+                        "-define", "png:color-type=6",
+                        "processed/text_cleaned2.png"])
+
+        img = cv2.imread("processed/text_cleaned2.png")
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
     erosion = int(erosion)
     dilation = int(dilation)
     if erosion > 0:
         kernel = np.ones((erosion, erosion), np.uint8)
         img = cv2.erode(img, kernel)
-    
     if dilation > 0:
         kernel = np.ones((dilation, dilation), np.uint8)
         img = cv2.dilate(img, kernel)
