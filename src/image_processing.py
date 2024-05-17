@@ -37,10 +37,12 @@ def resize_image(img, size):
 
 def set_treshold(img, treshold, filter_size):
     if filter_size > 1:
+        if filter_size % 2 == 0:
+            filter_size += 1
         img = cv2.adaptiveThreshold(img, 255,
                                     cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                     cv2.THRESH_BINARY,
-                                    int(filter_size), 2)
+                                    int(filter_size), treshold)
     else:
         img = cv2.threshold(img, treshold, 255, cv2.THRESH_BINARY)[1]
     return img

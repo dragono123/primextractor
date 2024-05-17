@@ -510,7 +510,7 @@ class PrimextractorGUI():
 
         ttk.Label(setting_frame, text='Image Cleaner Filter::').\
             grid(column=0, row=3)
-        ScaleWidget(self, "clean_filter_factor", setting_frame, (0, 50),
+        ScaleWidget(self, "clean_filter_factor", setting_frame, (0, 100),
                     resolution=1).\
             set_grid(column=1, row=3, columnspan=2)
 
